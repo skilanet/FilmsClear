@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import com.practicum.movieexample.Creator
+import com.practicum.movieexample.util.Creator
 import com.practicum.movieexample.ui.poster.PosterActivity
 import com.practicum.movieexample.R
 

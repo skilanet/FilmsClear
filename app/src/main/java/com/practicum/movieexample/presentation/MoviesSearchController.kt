@@ -12,14 +12,14 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.practicum.movieexample.Creator
+import com.practicum.movieexample.util.Creator
 import com.practicum.movieexample.R
 import com.practicum.movieexample.domain.api.MoviesInteractor
 import com.practicum.movieexample.domain.models.Movie
 import com.practicum.movieexample.ui.movies.MovieAdapter
 
 class MoviesSearchController(private val activity: Activity, private val adapter: MovieAdapter) {
-    private val moviesInteractor = Creator.provideMoviesInteractor()
+    private val moviesInteractor = Creator.provideMoviesInteractor(activity)
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
@@ -49,14 +49,18 @@ class MoviesSearchController(private val activity: Activity, private val adapter
             progressBar.visibility = View.VISIBLE
 
             moviesInteractor.searchMovies(queryInput.text.toString(), object : MoviesInteractor.MoviesConsumer {
-                override fun consume(foundMovies: List<Movie>) {
+                override fun consume(foundMovies: List<Movie>?, errorMessage: String?) {
                     handler.post {
                         progressBar.visibility = View.GONE
-                        movies.clear()
-                        movies.addAll(foundMovies)
-                        moviesList.visibility = View.VISIBLE
-                        adapter.notifyDataSetChanged()
-                        if (movies.isEmpty()) {
+                        if (foundMovies != null) {
+                            movies.clear()
+                            movies.addAll(foundMovies)
+                            adapter.notifyDataSetChanged()
+                            moviesList.visibility = View.VISIBLE
+                        }
+                        if (errorMessage != null) {
+                            showMessage("Something went wrong", errorMessage)
+                        } else if (movies.isEmpty()) {
                             showMessage("Nothing found", "")
                         } else {
                             hideMessage()
