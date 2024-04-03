@@ -148,5 +148,6 @@ class MoviesActivity : AppCompatActivity(), MoviesView {
 
     override fun showToast(additionalMessage: String) {
         Toast.makeText(this, additionalMessage, Toast.LENGTH_SHORT).show()
+
     }
 }
