@@ -19,6 +19,7 @@ import com.practicum.movieexample.util.Creator
 import com.practicum.movieexample.ui.poster.PosterActivity
 import com.practicum.movieexample.R
 import com.practicum.movieexample.domain.models.Movie
+import com.practicum.movieexample.presentation.movies.MoviesSearchPresenter
 import com.practicum.movieexample.presentation.movies.MoviesView
 import com.practicum.movieexample.ui.movies.model.MoviesState
 
@@ -47,11 +48,16 @@ class MoviesActivity : AppCompatActivity(), MoviesView {
 
     private val mainHandler = Handler(Looper.getMainLooper())
 
-    private val moviesSearchPresenter = Creator.provideMoviesSearchController(this, this)
+    private var moviesSearchPresenter: MoviesSearchPresenter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        moviesSearchPresenter = lastNonConfigurationInstance as? MoviesSearchPresenter
+        if (moviesSearchPresenter == null) {
+            moviesSearchPresenter = Creator.provideMoviesSearchController(this, this)
+        }
         placeholderMessage = findViewById(R.id.errorMessage)
         queryInput = findViewById(R.id.search)
         moviesList = findViewById(R.id.movie_list)
@@ -61,7 +67,7 @@ class MoviesActivity : AppCompatActivity(), MoviesView {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                moviesSearchPresenter.searchDebounce(s?.toString()?:"")
+                moviesSearchPresenter?.searchDebounce(s?.toString()?:"")
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -77,7 +83,7 @@ class MoviesActivity : AppCompatActivity(), MoviesView {
     override fun onDestroy() {
         super.onDestroy()
         textWatcher?.let { queryInput.removeTextChangedListener(it) }
-        moviesSearchPresenter.onDestroy()
+        moviesSearchPresenter?.onDestroy()
     }
 
     private fun clickDebounce(): Boolean {
@@ -89,13 +95,13 @@ class MoviesActivity : AppCompatActivity(), MoviesView {
         return current
     }
 
-    fun showLoading() {
+    private fun showLoading() {
         moviesList.visibility = View.GONE
         placeholderMessage.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
     }
 
-    fun showError(errorMessage: String) {
+    private fun showError(errorMessage: String) {
         moviesList.visibility = View.GONE
         placeholderMessage.visibility = View.VISIBLE
         progressBar.visibility = View.GONE
@@ -103,7 +109,7 @@ class MoviesActivity : AppCompatActivity(), MoviesView {
         placeholderMessage.text = errorMessage
     }
 
-    fun showEmpty(errorMessage: String) {
+    private fun showEmpty(errorMessage: String) {
         moviesList.visibility = View.GONE
         placeholderMessage.visibility = View.VISIBLE
         progressBar.visibility = View.GONE
@@ -131,6 +137,14 @@ class MoviesActivity : AppCompatActivity(), MoviesView {
         }
     }
 
+    @Deprecated("Deprecated in Java", ReplaceWith(
+        "super.onRetainCustomNonConfigurationInstance()",
+        "androidx.appcompat.app.AppCompatActivity"
+    )
+    )
+    override fun onRetainCustomNonConfigurationInstance(): Any? {
+        return moviesSearchPresenter
+    }
 
     override fun showToast(additionalMessage: String) {
         Toast.makeText(this, additionalMessage, Toast.LENGTH_SHORT).show()
