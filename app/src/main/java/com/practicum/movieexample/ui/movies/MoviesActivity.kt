@@ -50,13 +50,23 @@ class MoviesActivity : AppCompatActivity(), MoviesView {
 
     private var moviesSearchPresenter: MoviesSearchPresenter? = null
 
+    override fun onStart() {
+        super.onStart()
+        moviesSearchPresenter?.attachView(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        moviesSearchPresenter?.attachView(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         moviesSearchPresenter = lastNonConfigurationInstance as? MoviesSearchPresenter
         if (moviesSearchPresenter == null) {
-            moviesSearchPresenter = Creator.provideMoviesSearchController(this, this)
+            moviesSearchPresenter = Creator.provideMoviesSearchController(this.applicationContext)
         }
         placeholderMessage = findViewById(R.id.errorMessage)
         queryInput = findViewById(R.id.search)
@@ -80,10 +90,30 @@ class MoviesActivity : AppCompatActivity(), MoviesView {
         moviesList.adapter = movieAdapter
     }
 
+    override fun onPause() {
+        super.onPause()
+        moviesSearchPresenter?.detachView()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        moviesSearchPresenter?.detachView()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        moviesSearchPresenter?.detachView()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
+        moviesSearchPresenter?.detachView()
         textWatcher?.let { queryInput.removeTextChangedListener(it) }
         moviesSearchPresenter?.onDestroy()
+
+        if (isFinishing) {
+            moviesSearchPresenter = null
+        }
     }
 
     private fun clickDebounce(): Boolean {

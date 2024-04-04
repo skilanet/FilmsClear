@@ -7,7 +7,6 @@ import com.practicum.movieexample.domain.api.MoviesInteractor
 import com.practicum.movieexample.domain.api.MoviesRepository
 import com.practicum.movieexample.domain.impl.MoviesInteractorImpl
 import com.practicum.movieexample.presentation.movies.MoviesSearchPresenter
-import com.practicum.movieexample.presentation.movies.MoviesView
 
 object Creator {
     private fun getMoviesRepository(context: Context): MoviesRepository {
@@ -18,7 +17,7 @@ object Creator {
         return MoviesInteractorImpl(getMoviesRepository(context))
     }
 
-    fun provideMoviesSearchController(moviesView: MoviesView, context: Context): MoviesSearchPresenter {
-        return MoviesSearchPresenter(moviesView, context)
+    fun provideMoviesSearchController(context: Context): MoviesSearchPresenter {
+        return MoviesSearchPresenter(context)
     }
 }

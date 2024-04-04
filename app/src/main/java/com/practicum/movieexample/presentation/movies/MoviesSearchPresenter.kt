@@ -9,10 +9,13 @@ import com.practicum.movieexample.domain.api.MoviesInteractor
 import com.practicum.movieexample.domain.models.Movie
 import com.practicum.movieexample.ui.movies.model.MoviesState
 
-class MoviesSearchPresenter(private val view: MoviesView, context: Context) {
+class MoviesSearchPresenter(context: Context) {
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
+
+    private var view: MoviesView? = null
+    private var state: MoviesState? = null
 
     private val movies = ArrayList<Movie>()
 
@@ -27,6 +30,9 @@ class MoviesSearchPresenter(private val view: MoviesView, context: Context) {
     }
 
     fun searchDebounce(changedText: String) {
+        if (lastSearchText == changedText) {
+            return
+        }
         lastSearchText = changedText
         handler.removeCallbacks(searchRunnable)
         handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
@@ -35,7 +41,7 @@ class MoviesSearchPresenter(private val view: MoviesView, context: Context) {
     private fun searchRequest(newSearchText: String) {
         if (newSearchText.isNotEmpty()) {
 
-            view.render(MoviesState.Loading)
+            renderState(MoviesState.Loading)
 
             moviesInteractor.searchMovies(newSearchText, object : MoviesInteractor.MoviesConsumer {
                 @SuppressLint("NotifyDataSetChanged")
@@ -47,11 +53,11 @@ class MoviesSearchPresenter(private val view: MoviesView, context: Context) {
                         }
                         when {
                             errorMessage != null -> {
-                                view.render(MoviesState.Error("Something went wrong"))
-                                view.showToast(errorMessage)
+                                renderState(MoviesState.Error("Something went wrong"))
+                                view?.showToast(errorMessage)
                             }
-                            movies.isEmpty() -> view.render(MoviesState.Empty("Nothing found"))
-                            else -> view.render(MoviesState.Content(movies))
+                            movies.isEmpty() -> renderState(MoviesState.Empty("Nothing found"))
+                            else -> renderState(MoviesState.Content(movies))
                         }
                     }
                 }
@@ -61,5 +67,19 @@ class MoviesSearchPresenter(private val view: MoviesView, context: Context) {
 
     fun onDestroy() {
         handler.removeCallbacks(searchRunnable)
+    }
+
+    fun attachView(view: MoviesView) {
+        this.view = view
+        state?.let { view.render(it) }
+    }
+
+    fun detachView() {
+        this.view = null
+    }
+
+    fun renderState(state: MoviesState) {
+        this.state = state
+        this.view?.render(state)
     }
 }
