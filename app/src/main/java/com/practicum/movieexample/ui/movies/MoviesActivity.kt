@@ -12,20 +12,17 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.ComponentActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.practicum.movieexample.util.Creator
 import com.practicum.movieexample.ui.poster.PosterActivity
 import com.practicum.movieexample.R
 import com.practicum.movieexample.domain.models.Movie
-import com.practicum.movieexample.presentation.movies.MoviesSearchPresenter
-import com.practicum.movieexample.presentation.movies.MoviesView
+import com.practicum.movieexample.presentation.movies.MoviesSearchViewModel
 import com.practicum.movieexample.ui.movies.model.MoviesState
-import moxy.MvpActivity
-import moxy.presenter.InjectPresenter
-import moxy.presenter.ProvidePresenter
 
-class MoviesActivity : MvpActivity(), MoviesView {
+class MoviesActivity : ComponentActivity() {
 
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
@@ -50,17 +47,19 @@ class MoviesActivity : MvpActivity(), MoviesView {
 
     private val mainHandler = Handler(Looper.getMainLooper())
 
-    @InjectPresenter
-    lateinit var moviesSearchPresenter: MoviesSearchPresenter
-
-    @ProvidePresenter
-    fun providePresenter(): MoviesSearchPresenter {
-        return Creator.provideMoviesSearchPresenter(this.applicationContext)
-    }
+    private lateinit var viewModel: MoviesSearchViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        viewModel = ViewModelProvider(this, MoviesSearchViewModel.getViewModelFactory())[MoviesSearchViewModel::class.java]
+        viewModel.observeState().observe(this) {
+            render(it)
+        }
+        viewModel.observeShowToast().observe(this) {
+            showToast(it)
+
+        }
 
         placeholderMessage = findViewById(R.id.errorMessage)
         queryInput = findViewById(R.id.search)
@@ -71,7 +70,7 @@ class MoviesActivity : MvpActivity(), MoviesView {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                moviesSearchPresenter.searchDebounce(s?.toString() ?: "")
+                viewModel.searchDebounce(s?.toString() ?: "")
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -126,7 +125,7 @@ class MoviesActivity : MvpActivity(), MoviesView {
         movieAdapter.notifyDataSetChanged()
     }
 
-    override fun render(state: MoviesState) {
+    private fun render(state: MoviesState) {
         when (state) {
             is MoviesState.Loading -> showLoading()
             is MoviesState.Content -> showContent(state.movies)
@@ -135,7 +134,7 @@ class MoviesActivity : MvpActivity(), MoviesView {
         }
     }
 
-    override fun showToast(additionalMessage: String) {
+    private fun showToast(additionalMessage: String) {
         Toast.makeText(this, additionalMessage, Toast.LENGTH_SHORT).show()
 
     }
