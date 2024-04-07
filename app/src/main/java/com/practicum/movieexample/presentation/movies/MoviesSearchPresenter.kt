@@ -4,19 +4,16 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import com.practicum.movieexample.util.Creator
 import com.practicum.movieexample.domain.api.MoviesInteractor
 import com.practicum.movieexample.domain.models.Movie
 import com.practicum.movieexample.ui.movies.model.MoviesState
+import moxy.MvpPresenter
 
-class MoviesSearchPresenter(context: Context) {
+class MoviesSearchPresenter(context: Context) : MvpPresenter<MoviesView>() {
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
-
-    private var view: MoviesView? = null
-    private var state: MoviesState? = null
 
     private val movies = ArrayList<Movie>()
 
@@ -55,8 +52,9 @@ class MoviesSearchPresenter(context: Context) {
                         when {
                             errorMessage != null -> {
                                 renderState(MoviesState.Error("Something went wrong"))
-                                view?.showToast(errorMessage)
+                                viewState.showToast(errorMessage)
                             }
+
                             movies.isEmpty() -> renderState(MoviesState.Empty("Nothing found"))
                             else -> renderState(MoviesState.Content(movies))
                         }
@@ -66,22 +64,11 @@ class MoviesSearchPresenter(context: Context) {
         }
     }
 
-    fun onDestroy() {
+    override fun onDestroy() {
         handler.removeCallbacks(searchRunnable)
     }
 
-    fun attachView(view: MoviesView) {
-        this.view = view
-        state?.let { view.render(it) }
-        Log.d("ATTACHVIEW", "this")
-    }
-
-    fun detachView() {
-        this.view = null
-    }
-
     fun renderState(state: MoviesState) {
-        this.state = state
-        this.view?.render(state)
+        viewState.render(state)
     }
 }
