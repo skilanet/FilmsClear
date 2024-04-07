@@ -22,6 +22,7 @@ import com.practicum.movieexample.domain.models.Movie
 import com.practicum.movieexample.presentation.movies.MoviesSearchPresenter
 import com.practicum.movieexample.presentation.movies.MoviesView
 import com.practicum.movieexample.ui.movies.model.MoviesState
+import com.practicum.movieexample.util.MoviesApplication
 
 class MoviesActivity : AppCompatActivity(), MoviesView {
 
@@ -64,20 +65,22 @@ class MoviesActivity : AppCompatActivity(), MoviesView {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        moviesSearchPresenter = lastNonConfigurationInstance as? MoviesSearchPresenter
+        moviesSearchPresenter =
+            (this.applicationContext as? MoviesApplication)?.moviesSearchPresenter
         if (moviesSearchPresenter == null) {
             moviesSearchPresenter = Creator.provideMoviesSearchController(this.applicationContext)
+            (this.application as? MoviesApplication)?.moviesSearchPresenter = moviesSearchPresenter
         }
         placeholderMessage = findViewById(R.id.errorMessage)
         queryInput = findViewById(R.id.search)
         moviesList = findViewById(R.id.movie_list)
         progressBar = findViewById(R.id.progressBar)
 
-        textWatcher = object :TextWatcher{
+        textWatcher = object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                moviesSearchPresenter?.searchDebounce(s?.toString()?:"")
+                moviesSearchPresenter?.searchDebounce(s?.toString() ?: "")
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -159,21 +162,12 @@ class MoviesActivity : AppCompatActivity(), MoviesView {
     }
 
     override fun render(state: MoviesState) {
-        when(state){
+        when (state) {
             is MoviesState.Loading -> showLoading()
             is MoviesState.Content -> showContent(state.movies)
             is MoviesState.Empty -> showEmpty(state.message)
             is MoviesState.Error -> showError(state.errorMessage)
         }
-    }
-
-    @Deprecated("Deprecated in Java", ReplaceWith(
-        "super.onRetainCustomNonConfigurationInstance()",
-        "androidx.appcompat.app.AppCompatActivity"
-    )
-    )
-    override fun onRetainCustomNonConfigurationInstance(): Any? {
-        return moviesSearchPresenter
     }
 
     override fun showToast(additionalMessage: String) {

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import com.practicum.movieexample.util.Creator
 import com.practicum.movieexample.domain.api.MoviesInteractor
 import com.practicum.movieexample.domain.models.Movie
@@ -72,6 +73,7 @@ class MoviesSearchPresenter(context: Context) {
     fun attachView(view: MoviesView) {
         this.view = view
         state?.let { view.render(it) }
+        Log.d("ATTACHVIEW", "this")
     }
 
     fun detachView() {
