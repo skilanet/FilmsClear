@@ -33,21 +33,32 @@ class MoviesActivity : ComponentActivity() {
     private lateinit var moviesList: RecyclerView
     private lateinit var progressBar: ProgressBar
 
-    private val movieAdapter = MovieAdapter {
-        if (clickDebounce()) {
-            val intent = Intent(this, PosterActivity::class.java)
-            intent.putExtra("poster", it.image)
-            startActivity(intent)
+    private lateinit var viewModel: MoviesSearchViewModel
+
+
+    private val movieAdapter = MovieAdapter(
+        object : MovieAdapter.MovieClickListener{
+            override fun onMovieClick(movie: Movie) {
+                if (clickDebounce()) {
+                    val intent = Intent(this@MoviesActivity, PosterActivity::class.java)
+                    intent.putExtra("poster", movie.image)
+                    startActivity(intent)
+                }
+            }
+
+            override fun onFavouriteToggleClick(movie: Movie) {
+                viewModel.toggleFavorite(movie)
+            }
+
         }
-    }
+
+    )
 
     private var textWatcher: TextWatcher? = null
 
     private var isClickAllowed = true
 
     private val mainHandler = Handler(Looper.getMainLooper())
-
-    private lateinit var viewModel: MoviesSearchViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

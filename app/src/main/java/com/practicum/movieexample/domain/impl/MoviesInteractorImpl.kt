@@ -2,6 +2,7 @@ package com.practicum.movieexample.domain.impl
 
 import com.practicum.movieexample.domain.api.MoviesInteractor
 import com.practicum.movieexample.domain.api.MoviesRepository
+import com.practicum.movieexample.domain.models.Movie
 import com.practicum.movieexample.util.Resource
 import java.util.concurrent.Executors
 
@@ -20,5 +21,13 @@ class MoviesInteractorImpl(private val repository: MoviesRepository) : MoviesInt
                 }
             }
         }
+    }
+
+    override fun addMovieToFavorites(movie: Movie) {
+        repository.addMovieToFavorites(movie)
+    }
+
+    override fun removeMovieFromFavorites(movie: Movie) {
+        repository.removeMovieFromFavorites(movie)
     }
 }

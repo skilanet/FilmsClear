@@ -6,8 +6,11 @@ import com.practicum.movieexample.domain.api.MoviesRepository
 import com.practicum.movieexample.domain.models.Movie
 import com.practicum.movieexample.util.Resource
 
-class MoviesRepositoryImpl(private val networkClient: NetworkClient) : MoviesRepository {
-    override fun searchMovies(expression: String):Resource<List<Movie>> {
+class MoviesRepositoryImpl(
+    private val networkClient: NetworkClient,
+    private val localStorage: LocalStorage
+) : MoviesRepository {
+    override fun searchMovies(expression: String): Resource<List<Movie>> {
         val response = networkClient.doRequest(MoviesSearchRequest(expression))
         return when (response.resultCode) {
             -1 -> {
@@ -15,8 +18,9 @@ class MoviesRepositoryImpl(private val networkClient: NetworkClient) : MoviesRep
             }
 
             200 -> {
+                val stored = localStorage.getSavedFavorites()
                 Resource.Success((response as MoviesSearchResponse).results.map {
-                    Movie(it.id, it.resultType, it.image, it.title, it.description)
+                    Movie(it.id, it.resultType, it.image, it.title, it.description, stored.contains(it.id))
                 })
             }
 
@@ -24,6 +28,14 @@ class MoviesRepositoryImpl(private val networkClient: NetworkClient) : MoviesRep
                 Resource.Error("Ошибка сервера")
             }
         }
+    }
+
+    override fun addMovieToFavorites(movie: Movie) {
+        localStorage.addToFavorites(movie.id)
+    }
+
+    override fun removeMovieFromFavorites(movie: Movie) {
+        localStorage.removeFromFavorites(movie.id)
     }
 
 }
