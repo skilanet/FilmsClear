@@ -1,9 +1,11 @@
 package com.practicum.movieexample.data
 
+import com.practicum.movieexample.data.dto.MovieDetailsResponse
 import com.practicum.movieexample.data.dto.MoviesSearchRequest
 import com.practicum.movieexample.data.dto.MoviesSearchResponse
 import com.practicum.movieexample.domain.api.MoviesRepository
 import com.practicum.movieexample.domain.models.Movie
+import com.practicum.movieexample.domain.models.MovieDetails
 import com.practicum.movieexample.util.Resource
 
 class MoviesRepositoryImpl(
@@ -26,6 +28,26 @@ class MoviesRepositoryImpl(
 
             else -> {
                 Resource.Error("Ошибка сервера")
+            }
+        }
+    }
+
+    override fun getMovieDetails(movieId: String): Resource<MovieDetails> {
+        val response = networkClient.doRequest(MoviesSearchRequest(movieId))
+        return when (response.resultCode) {
+            -1 -> {
+                Resource.Error("Проверьте подключение к интернету")
+            }
+
+            200 -> {
+                with(response as MovieDetailsResponse) {
+                    Resource.Success(MovieDetails(id, title, imDbRating, year,
+                        countries, genres, directors, writers, stars, plot))
+                }
+            }
+            else -> {
+                Resource.Error("Ошибка сервера")
+
             }
         }
     }

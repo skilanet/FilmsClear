@@ -1,4 +1,4 @@
-package com.practicum.movieexample.ui.movies.model
+package com.practicum.movieexample.presentation.movies
 
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData

@@ -1,4 +1,3 @@
 package com.practicum.movieexample.data.dto
 
-class MovieDetailsRequest {
-}
+data class MovieDetailsRequest(val movieId: String)
