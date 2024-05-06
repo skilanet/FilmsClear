@@ -22,7 +22,7 @@ class MoviesSearchViewModel(private val moviesInteractor: MoviesInteractor) : Vi
     private val mediatorStateLiveData = MediatorLiveData<MoviesState>().also { liveData ->
         liveData.addSource(stateLiveData) { movieState ->
             liveData.value = when (movieState) {
-                is MoviesState.Content -> MoviesState.Content(movieState.movies.sortedByDescending { it.inFavourite })
+                is MoviesState.Content -> MoviesState.Content(movieState.movies)
                 is MoviesState.Empty -> movieState
                 is MoviesState.Error -> movieState
                 is MoviesState.Loading -> movieState
@@ -85,27 +85,4 @@ class MoviesSearchViewModel(private val moviesInteractor: MoviesInteractor) : Vi
         stateLiveData.postValue(state)
     }
 
-    fun toggleFavorite(movie: Movie) {
-        if (movie.inFavourite) {
-            moviesInteractor.removeMovieFromFavorites(movie)
-        } else {
-            moviesInteractor.addMovieToFavorites(movie)
-        }
-
-        updateMovieContent(movie.id, movie.copy(inFavourite = !movie.inFavourite))
-    }
-
-    private fun updateMovieContent(movieId: String, newMovie: Movie) {
-        val currentState = stateLiveData.value
-
-        if (currentState is MoviesState.Content) {
-            val movieIndex = currentState.movies.indexOfFirst { it.id == movieId }
-
-            if (movieIndex != -1) {
-                stateLiveData.value = MoviesState.Content(currentState.movies.toMutableList().also {
-                    it[movieIndex] = newMovie
-                })
-            }
-        }
-    }
 }

@@ -1,16 +1,22 @@
 package com.practicum.movieexample.data
 
-import com.practicum.movieexample.data.dto.MovieDetailsResponse
-import com.practicum.movieexample.data.dto.MoviesSearchRequest
-import com.practicum.movieexample.data.dto.MoviesSearchResponse
+import com.practicum.movieexample.data.dto.details.MovieDetailsRequest
+import com.practicum.movieexample.data.dto.details.MovieDetailsResponse
+import com.practicum.movieexample.data.dto.full_cast.MovieFullCastRequest
+import com.practicum.movieexample.data.dto.full_cast.MovieFullCastResponse
+import com.practicum.movieexample.data.dto.movie.MoviesSearchRequest
+import com.practicum.movieexample.data.dto.movie.MoviesSearchResponse
 import com.practicum.movieexample.domain.api.MoviesRepository
 import com.practicum.movieexample.domain.models.Movie
 import com.practicum.movieexample.domain.models.MovieDetails
+import com.practicum.movieexample.domain.models.full_cast.Actor
+import com.practicum.movieexample.domain.models.full_cast.Directors
+import com.practicum.movieexample.domain.models.full_cast.MovieFullCast
+import com.practicum.movieexample.domain.models.full_cast.Writers
 import com.practicum.movieexample.util.Resource
 
 class MoviesRepositoryImpl(
     private val networkClient: NetworkClient,
-    private val localStorage: LocalStorage
 ) : MoviesRepository {
     override fun searchMovies(expression: String): Resource<List<Movie>> {
         val response = networkClient.doRequest(MoviesSearchRequest(expression))
@@ -20,9 +26,8 @@ class MoviesRepositoryImpl(
             }
 
             200 -> {
-                val stored = localStorage.getSavedFavorites()
                 Resource.Success((response as MoviesSearchResponse).results.map {
-                    Movie(it.id, it.resultType, it.image, it.title, it.description, stored.contains(it.id))
+                    Movie(it.id, it.resultType, it.image, it.title, it.description)
                 })
             }
 
@@ -33,7 +38,7 @@ class MoviesRepositoryImpl(
     }
 
     override fun getMovieDetails(movieId: String): Resource<MovieDetails> {
-        val response = networkClient.doRequest(MoviesSearchRequest(movieId))
+        val response = networkClient.doRequest(MovieDetailsRequest(movieId))
         return when (response.resultCode) {
             -1 -> {
                 Resource.Error("Проверьте подключение к интернету")
@@ -52,12 +57,18 @@ class MoviesRepositoryImpl(
         }
     }
 
-    override fun addMovieToFavorites(movie: Movie) {
-        localStorage.addToFavorites(movie.id)
-    }
+    override fun getMovieFullCast(movieId: String): Resource<MovieFullCast> {
+        val response = networkClient.doRequest(MovieFullCastRequest(movieId))
+        return when (response.resultCode){
+            -1 -> {
+                Resource.Error("Проверьте подключение к интернету")
+            }
 
-    override fun removeMovieFromFavorites(movie: Movie) {
-        localStorage.removeFromFavorites(movie.id)
+            200 -> {
+                with(response as MovieFullCastResponse){
+                    Resource.Success(MovieFullCast(title, fullTitle, type, year, Directors(directors.items), writers as Writers, actors as List<Actor>))
+                }
+            }
+        }
     }
-
 }

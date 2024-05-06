@@ -1,4 +1,4 @@
-package com.practicum.movieexample.data.dto
+package com.practicum.movieexample.data.dto.movie
 
 data class MovieDto(
     val id: String,

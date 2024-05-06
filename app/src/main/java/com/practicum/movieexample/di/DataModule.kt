@@ -2,12 +2,9 @@ package com.practicum.movieexample.di
 
 import android.content.Context
 import com.google.gson.Gson
-import com.practicum.movieexample.data.LocalStorage
-import com.practicum.movieexample.data.MoviesRepositoryImpl
 import com.practicum.movieexample.data.NetworkClient
 import com.practicum.movieexample.data.network.ImdbApi
 import com.practicum.movieexample.data.network.RetrofitNetworkClient
-import com.practicum.movieexample.domain.api.MoviesRepository
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -23,12 +20,8 @@ val dataModule = module {
     single {
         androidContext().getSharedPreferences("local_storage", Context.MODE_PRIVATE)
     }
-
-    single {
-        LocalStorage(get())
-    }
     single<NetworkClient> {
-        RetrofitNetworkClient(androidContext(), get())
+        RetrofitNetworkClient(get(), androidContext())
     }
     factory {
         Gson()

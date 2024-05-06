@@ -3,19 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.movies.MoviesActivity">
+    android:layout_height="match_parent">
 
     <EditText
         android:id="@+id/search"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:importantForAutofill="no"
+        android:inputType="text"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:imeOptions="actionDone"
-        android:maxLines="1"/>
+        android:maxLines="1"
+        android:hint="@string/input_film_name"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/movie_list"

@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/errorMessage"
+            style="@style/LabelTextStyle"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/section_margin"
+            android:textAlignment="center" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/title_margin">
+
+            <TextView
+                android:id="@+id/title"
+                style="@style/TitleTextStyle"
+                android:layout_marginBottom="@dimen/title_margin"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.4" />
+
+            <TextView
+                android:id="@+id/ratingLabel"
+                style="@style/LabelTextStyle"
+                android:layout_marginTop="@dimen/line_margin"
+                android:text="@string/rating"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/title" />
+
+            <TextView
+                android:id="@+id/ratingValue"
+                style="@style/ValueTextStyle"
+                app:layout_constraintLeft_toLeftOf="@id/guideline"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/ratingLabel" />
+
+            <TextView
+                android:id="@+id/yearLabel"
+                style="@style/LabelTextStyle"
+                android:layout_marginTop="@dimen/line_margin"
+                android:text="@string/year"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ratingValue" />
+
+            <TextView
+                android:id="@+id/yearValue"
+                style="@style/ValueTextStyle"
+                app:layout_constraintLeft_toLeftOf="@id/guideline"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/yearLabel" />
+
+            <TextView
+                android:id="@+id/countryLabel"
+                style="@style/LabelTextStyle"
+                android:layout_marginTop="@dimen/line_margin"
+                android:text="@string/country"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/yearValue" />
+
+            <TextView
+                android:id="@+id/countryValue"
+                style="@style/ValueTextStyle"
+                app:layout_constraintLeft_toLeftOf="@id/guideline"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/countryLabel" />
+
+            <TextView
+                android:id="@+id/genreLabel"
+                style="@style/LabelTextStyle"
+                android:layout_marginTop="@dimen/line_margin"
+                android:text="@string/genre"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/countryValue" />
+
+            <TextView
+                android:id="@+id/genreValue"
+                style="@style/ValueTextStyle"
+                app:layout_constraintLeft_toLeftOf="@id/guideline"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/genreLabel" />
+
+            <TextView
+                android:id="@+id/directorLabel"
+                style="@style/LabelTextStyle"
+                android:layout_marginTop="@dimen/line_margin"
+                android:text="@string/director"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/genreValue" />
+
+            <TextView
+                android:id="@+id/directorValue"
+                style="@style/ValueTextStyle"
+                app:layout_constraintLeft_toLeftOf="@id/guideline"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/directorLabel" />
+
+            <TextView
+                android:id="@+id/writerLabel"
+                style="@style/LabelTextStyle"
+                android:layout_marginTop="@dimen/line_margin"
+                android:text="@string/writer"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/directorValue" />
+
+            <TextView
+                android:id="@+id/writerValue"
+                style="@style/ValueTextStyle"
+                app:layout_constraintLeft_toLeftOf="@id/guideline"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/writerLabel" />
+
+            <TextView
+                android:id="@+id/castLabel"
+                style="@style/LabelTextStyle"
+                android:layout_marginTop="@dimen/line_margin"
+                android:text="@string/cast"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/writerValue" />
+
+            <TextView
+                android:id="@+id/castValue"
+                style="@style/ValueTextStyle"
+                app:layout_constraintLeft_toLeftOf="@id/guideline"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="@id/castLabel" />
+
+            <TextView
+                android:id="@+id/plotTitle"
+                style="@style/TitleTextStyle"
+                android:layout_marginTop="@dimen/section_margin"
+                android:layout_marginBottom="@dimen/title_margin"
+                android:text="@string/plot"
+                android:textSize="@dimen/subtitle_text_size"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/castValue" />
+
+            <TextView
+                android:id="@+id/plot"
+                style="@style/ValueTextStyle"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/plotTitle" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+</ScrollView>

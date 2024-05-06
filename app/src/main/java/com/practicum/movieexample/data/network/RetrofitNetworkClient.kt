@@ -4,18 +4,18 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import com.practicum.movieexample.data.NetworkClient
-import com.practicum.movieexample.data.dto.MovieDetailsRequest
-import com.practicum.movieexample.data.dto.MoviesSearchRequest
 import com.practicum.movieexample.data.dto.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.practicum.movieexample.data.dto.details.MovieDetailsRequest
+import com.practicum.movieexample.data.dto.full_cast.MovieFullCastRequest
+import com.practicum.movieexample.data.dto.movie.MoviesSearchRequest
 
 class RetrofitNetworkClient(
     private val imdbService: ImdbApi,
-    private val context: Context) : NetworkClient {
+    private val context: Context
+) : NetworkClient {
 
     override fun doRequest(dto: Any): Response {
-        if (isConnected() == false) {
+        if (!isConnected()) {
             return Response().apply { resultCode = -1 }
         }
         if ((dto !is MoviesSearchRequest) && (dto !is MovieDetailsRequest)) {
@@ -24,14 +24,14 @@ class RetrofitNetworkClient(
 
         val response = if (dto is MoviesSearchRequest) {
             imdbService.findMovie(dto.expression).execute()
+        } else if (dto is MovieDetailsRequest) {
+            imdbService.getMovieDetails(dto.movieId).execute()
         } else {
-            imdbService.getMovieDetails((dto as MovieDetailsRequest).movieId).execute()
+            imdbService.getMovieFullCast((dto as MovieFullCastRequest).movieId).execute()
         }
         val body = response.body()
-        return if (body != null) {
-            body.apply { resultCode = response.code() }
-        } else {
-            Response().apply { resultCode = response.code() }
+        return body?.apply { resultCode = response.code() } ?: Response().apply {
+            resultCode = response.code()
         }
     }
 

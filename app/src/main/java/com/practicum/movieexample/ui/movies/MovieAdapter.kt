@@ -17,6 +17,5 @@ class MovieAdapter(private val clickListener: MovieClickListener): RecyclerView.
 
     interface MovieClickListener {
         fun onMovieClick(movie: Movie)
-        fun onFavouriteToggleClick(movie: Movie)
     }
 }

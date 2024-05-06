@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">MovieExample</string>
+    <string name="poster">ПОСТЕР</string>
+    <string name="details">О ФИЛЬМЕ</string>
+    <string name="rating">Рейтинг IMDb:</string>
+    <string name="year">Год:</string>
+    <string name="country">Страна:</string>
+    <string name="genre">Жанр:</string>
+    <string name="director">Режиссёр:</string>
+    <string name="writer">Сценарист:</string>
+    <string name="cast">В ролях:</string>
+    <string name="plot">Сюжет:</string>
+    <string name="input_film_name">Input film name</string>
 </resources>

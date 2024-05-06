@@ -6,8 +6,6 @@ import com.practicum.movieexample.domain.models.MovieDetails
 interface MoviesInteractor {
     fun searchMovies(expression: String, consumer: MoviesConsumer)
     fun getMovieDetails(movieId: String, consumer: MovieDetailsConsumer)
-    fun addMovieToFavorites(movie: Movie)
-    fun removeMovieFromFavorites(movie: Movie)
 
     interface MoviesConsumer {
         fun consume(foundMovies: List<Movie>?, errorMessage: String?)

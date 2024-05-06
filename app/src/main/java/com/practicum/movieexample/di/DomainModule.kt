@@ -8,7 +8,7 @@ import org.koin.dsl.module
 
 val domainModule = module {
     single<MoviesRepository> {
-        MoviesRepositoryImpl(get(), get())
+        MoviesRepositoryImpl(get())
     }
     single<MoviesInteractor> {
         MoviesInteractorImpl(get())
